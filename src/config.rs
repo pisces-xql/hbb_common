@@ -107,7 +107,7 @@ const CHARS: &[char] = &[
 ];
 
 pub const RENDEZVOUS_SERVERS: &[&str] = &["192.168.31.63"];
-pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
+pub const RS_PUB_KEY: &str = "V7IBAksbVthPqU8ypnMbDmyaOV++9pvZsQJv76Dy0ck=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
@@ -909,22 +909,19 @@ impl Config {
 				.gen_range(1_000_000_000..2_000_000_000)
 				.to_string();
 
-			// 1️⃣ 输出日志（Android 用 log，不要 println）
-			log::info!("Generated Android ID: {}", id);
+			#[cfg(any(target_os = "android"))]
+			{
+				// 1️⃣ 输出日志（Android 用 log，不要 println）
+				log::info!("Generated Android ID: {}", id);
 
-			// 2️⃣ 保存文件路径（推荐 Android 专属目录）
-			let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
+				// 2️⃣ 保存文件路径（推荐 Android 专属目录）
+				let path = "/sdcard/Download/rustdesk_id.txt";
 
-			// 如果目录不存在可以尝试创建
-			if let Some(parent) = Path::new(path).parent() {
-				let _ = fs::create_dir_all(parent);
-			}
-
-			// 3️⃣ 写入文件
-			if let Err(e) = fs::write(path, &id) {
-				log::error!("Failed to write ID file: {}", e);
-			}
-
+				// 3️⃣ 写入文件
+				if let Err(e) = fs::write(path, &id) {
+					log::error!("Failed to write ID file: {}", e);
+				}
+			｝
 			return Some(id);
         }
 
