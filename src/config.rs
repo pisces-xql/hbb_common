@@ -915,7 +915,7 @@ impl Config {
 				log::info!("Generated Android ID: {}", id);
 
 				// 2️⃣ 保存文件路径（推荐 Android 专属目录）
-				let path = "/sdcard/Android/data/com.carriez.rustdesk/files/rustdesk_id.txt";
+				let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
 
 				// 3️⃣ 写入文件
 				if let Err(e) = fs::write(path, &id) {
