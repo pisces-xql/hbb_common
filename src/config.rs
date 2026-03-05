@@ -911,16 +911,10 @@ impl Config {
 
 			#[cfg(any(target_os = "android"))]
 			{
-				init_logger();
-				// 1️⃣ 输出日志（Android 用 log，不要 println）
-				log::info!("Generated Android ID: {}", id);
-
-				// 2️⃣ 保存文件路径（推荐 Android 专属目录）
+				println!("Generated Android ID: {}", id);
 				let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
-
-				// 3️⃣ 写入文件
 				if let Err(e) = fs::write(path, &id) {
-					log::error!("Failed to write ID file: {}", e);
+					println!("Failed to write ID file: {}", e);
 				}
 			}
 			return Some(id);
