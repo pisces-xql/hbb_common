@@ -28,6 +28,13 @@ use crate::{
     },
 };
 
+use android_logger::Config;
+use log::Level;
+
+android_logger::init_once(
+    Config::default().with_min_level(Level::Info)
+);
+
 pub const RENDEZVOUS_TIMEOUT: u64 = 12_000;
 pub const CONNECT_TIMEOUT: u64 = 18_000;
 pub const READ_TIMEOUT: u64 = 18_000;
