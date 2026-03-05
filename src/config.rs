@@ -28,8 +28,6 @@ use crate::{
     },
 };
 
-use log::Level;
-
 #[cfg(target_os = "android")]
 use android_logger::Config;
 
