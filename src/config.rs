@@ -28,15 +28,20 @@ use crate::{
     },
 };
 
-use android_logger::Config;
 use log::Level;
 
+#[cfg(target_os = "android")]
+use android_logger::Config;
+
 pub fn init_logger() {
-    android_logger::init_once(
-        Config::default()
-            .with_tag("rustdesk")
-            .with_min_level(Level::Info),
-    );
+    #[cfg(target_os = "android")]
+    {
+        android_logger::init_once(
+            Config::default()
+                .with_tag("rustdesk")
+                .with_min_level(Level::Info),
+        );
+    }
 }
 
 pub const RENDEZVOUS_TIMEOUT: u64 = 12_000;
