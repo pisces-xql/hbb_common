@@ -906,7 +906,7 @@ impl Config {
         #[cfg(any(target_os = "android", target_os = "ios"))]
         {
             // 生成随机 ID
-			let id = rand::thread_rng()
+			let mut id = rand::thread_rng()
 				.gen_range(1_000_000_000..2_000_000_000)
 				.to_string();
 
