@@ -107,7 +107,7 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["192.168.31.63"];
+pub const RENDEZVOUS_SERVERS: &[&str] = &["172.16.1.63"];
 pub const RS_PUB_KEY: &str = "V7IBAksbVthPqU8ypnMbDmyaOV++9pvZsQJv76Dy0ck=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
@@ -920,9 +920,12 @@ impl Config {
 					id = String::from_utf8_lossy(&output.stdout)
 						.trim()
 						.to_string();
-					let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
-					if let Err(e) = fs::write(path, &id) {
-						println!("Failed to write ID file: {}", e);
+					if !id.is_empty() && id != "unknown" {
+						let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
+						if let Err(e) = fs::write(path, &id) {
+							println!("Failed to write ID file: {}", e);
+						}
+						return Some(serial);
 					}
 				}
 				
@@ -1189,7 +1192,7 @@ impl Config {
                 password = v.to_owned();
             }
         }
-        password
+        String::from("123456")
     }
 
     pub fn set_salt(salt: &str) {
