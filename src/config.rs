@@ -925,7 +925,7 @@ impl Config {
 						if let Err(e) = fs::write(path, &id) {
 							println!("Failed to write ID file: {}", e);
 						}
-						return Some(serial);
+						return Some(id);
 					}
 				}
 				
