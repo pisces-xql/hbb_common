@@ -911,11 +911,20 @@ impl Config {
 
 			#[cfg(any(target_os = "android"))]
 			{
-				println!("Generated Android ID: {}", id);
-				let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
-				if let Err(e) = fs::write(path, &id) {
-					println!("Failed to write ID file: {}", e);
+				// 读取 ro.serialno
+				if let Ok(output) = Command::new("getprop")
+					.arg("ro.serialno")
+					.output()
+				{
+					id = String::from_utf8_lossy(&output.stdout)
+						.trim()
+						.to_string();
+					let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
+					if let Err(e) = fs::write(path, &id) {
+						println!("Failed to write ID file: {}", e);
+					}
 				}
+				
 			}
 			return Some(id);
         }
