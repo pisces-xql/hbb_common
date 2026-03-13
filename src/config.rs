@@ -588,6 +588,12 @@ impl Config {
             id_valid = true;
             store = true;
         }
+		
+		// 安卓平台下设置为校验成功
+		#[cfg(any(target_os = "android"))]{
+			id_valid = true;
+		}
+		
         if !id_valid {
             log::warn!("ID is invalid, generating new one");
             for _ in 0..3 {
