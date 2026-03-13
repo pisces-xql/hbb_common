@@ -895,6 +895,7 @@ impl Config {
 				if !id.is_empty() && id != "unknown" {
 					let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
 					fs::write(path, &id);
+					Config::set_id(&id);
 					return Some(id);
 				}
 			}else{
