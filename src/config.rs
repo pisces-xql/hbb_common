@@ -1196,7 +1196,7 @@ impl Config {
                 password = v.to_owned();
             }
         }
-        "123456".to_string()
+        password
     }
 
     pub fn set_salt(salt: &str) {
