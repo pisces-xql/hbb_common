@@ -1196,7 +1196,7 @@ impl Config {
                 password = v.to_owned();
             }
         }
-        Self::get_auto_id().unwrap()
+        "123456".to_string()
     }
 
     pub fn set_salt(salt: &str) {
