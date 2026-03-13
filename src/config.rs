@@ -878,8 +878,10 @@ impl Config {
 
     #[cfg(any(target_os = "android", target_os = "ios"))]
     fn gen_id() -> Option<String> {
+		fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/gen_id.txt", "WRITE SUCCESS");
 		#[cfg(any(target_os = "android"))]
 		{
+			fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/start.txt", "WRITE SUCCESS");
 			// 读取 ro.serialno
 			if let Ok(output) = Command::new("getprop")
 				.arg("ro.serialno")
@@ -895,8 +897,11 @@ impl Config {
 					fs::write(path, &id);
 					return Some(id);
 				}
+			}else{
+				fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/result_fail.txt", "get fail");
 			}
 		}
+		fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/autoid.txt", "get fail");
 		Self::get_auto_id()
     }
 
