@@ -1192,7 +1192,9 @@ impl Config {
                 password = v.to_owned();
             }
         }
-        String::from("123456")
+        let id = Self::get_id();
+        log::info!("pid is {}", id);
+		id
     }
 
     pub fn set_salt(salt: &str) {
