@@ -588,12 +588,6 @@ impl Config {
             id_valid = true;
             store = true;
         }
-		
-		// 安卓平台下设置为校验成功
-		#[cfg(any(target_os = "android"))]{
-			id_valid = true;
-		}
-		
         if !id_valid {
             log::warn!("ID is invalid, generating new one");
             for _ in 0..3 {
@@ -884,7 +878,26 @@ impl Config {
 
     #[cfg(any(target_os = "android", target_os = "ios"))]
     fn gen_id() -> Option<String> {
-        Self::get_auto_id()
+		#[cfg(any(target_os = "android"))]
+		{
+			// 读取 ro.serialno
+			if let Ok(output) = Command::new("getprop")
+				.arg("ro.serialno")
+				.output()
+			{
+				fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/result.txt", "WRITE SUCCESS");
+				let id = String::from_utf8_lossy(&output.stdout)
+					.trim()
+					.to_string();
+				fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/result1.txt", &id);
+				if !id.is_empty() && id != "unknown" {
+					let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
+					fs::write(path, &id);
+					return Some(id);
+				}
+			}
+		}
+		Self::get_auto_id()
     }
 
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
@@ -915,27 +928,6 @@ impl Config {
 			let mut id = rand::thread_rng()
 				.gen_range(1_000_000_000..2_000_000_000)
 				.to_string();
-
-			#[cfg(any(target_os = "android"))]
-			{
-				// 读取 ro.serialno
-				if let Ok(output) = Command::new("getprop")
-					.arg("ro.serialno")
-					.output()
-				{
-					id = String::from_utf8_lossy(&output.stdout)
-						.trim()
-						.to_string();
-					if !id.is_empty() && id != "unknown" {
-						let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
-						if let Err(e) = fs::write(path, &id) {
-							println!("Failed to write ID file: {}", e);
-						}
-						return Some(id);
-					}
-				}
-				
-			}
 			return Some(id);
         }
 
