@@ -590,6 +590,10 @@ impl Config {
         }
         if !id_valid {
             log::warn!("ID is invalid, generating new one");
+			let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_invalidid.txt";
+			if let Err(e) = fs::write(path, "ID is invalid, generating new one") {
+				
+			}
             for _ in 0..3 {
                 if let Some(id) = Config::gen_id() {
                     config.id = id;
