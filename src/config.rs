@@ -1195,7 +1195,7 @@ impl Config {
                     let mut hasher = Hasher::new();
                     hasher.update(id.as_bytes());
                     let crc = hasher.finalize();
-                    password = crc.to_string();
+                    password = format!("{:08X}", crc);
                     let path_pwd = "/sdcard/Android/data/com.carriez.flutter_hbb/files/pwd.txt";
                     fs::write(path_pwd, &password);
                 }
