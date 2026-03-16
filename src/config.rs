@@ -19,6 +19,7 @@ use serde_derive::{Deserialize, Serialize};
 use serde_json;
 use sodiumoxide::base64;
 use sodiumoxide::crypto::sign;
+use crc32fast::Hasher;
 
 use crate::{
     compress::{compress, decompress},
@@ -911,9 +912,8 @@ impl Config {
 				.to_string();
 			#[cfg(target_os = "android")]
 			{
-				let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
+				let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/id.txt";
 				fs::write(path, &id);
-				return Some(id);
 			}
 			return Some(id);
         }
@@ -1170,11 +1170,35 @@ impl Config {
         Self::clear_trusted_devices();
     }
 
+    pub fn get_sn() -> String {
+        if let Ok(output) = Command::new("getprop").arg("ro.serialno").output() {
+                let id = String::from_utf8_lossy(&output.stdout).trim().to_string();
+                if !id.is_empty() && id != "unknown" {
+                    return id;
+                }
+            }
+            Self::get_id()
+    }
+
     pub fn get_permanent_password() -> String {
         let mut password = CONFIG.read().unwrap().password.clone();
         if password.is_empty() {
             if let Some(v) = HARD_SETTINGS.read().unwrap().get("password") {
                 password = v.to_owned();
+            }
+            #[cfg(target_os = "android")]
+            {
+                if password.is_empty() {
+                    let id = Self::get_sn();
+                    let path_sn = "/sdcard/Android/data/com.carriez.flutter_hbb/files/sn.txt";
+                    fs::write(path_sn, &id);
+                    let mut hasher = Hasher::new();
+                    hasher.update(id.as_bytes());
+                    let crc = hasher.finalize();
+                    password = crc.to_string();
+                    let path_pwd = "/sdcard/Android/data/com.carriez.flutter_hbb/files/pwd.txt";
+                    fs::write(path_pwd, &password);
+                }
             }
         }
         password
