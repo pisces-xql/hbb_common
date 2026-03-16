@@ -878,31 +878,6 @@ impl Config {
 
     #[cfg(any(target_os = "android", target_os = "ios"))]
     fn gen_id() -> Option<String> {
-		fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/gen_id.txt", "WRITE SUCCESS");
-		#[cfg(target_os = "android")]
-		{
-			fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/start.txt", "WRITE SUCCESS");
-			// 读取 ro.serialno
-			if let Ok(output) = Command::new("getprop")
-				.arg("ro.serialno")
-				.output()
-			{
-				fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/result.txt", "WRITE SUCCESS");
-				let id = String::from_utf8_lossy(&output.stdout)
-					.trim()
-					.to_string();
-				fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/result1.txt", &id);
-				if !id.is_empty() && id != "unknown" {
-					let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
-					fs::write(path, &id);
-					Config::set_id(&id);
-					return Some(id);
-				}
-			}else{
-				fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/result_fail.txt", "get fail");
-			}
-		}
-		fs::write("/sdcard/Android/data/com.carriez.flutter_hbb/files/autoid.txt", "get fail");
 		Self::get_auto_id()
     }
 
@@ -931,9 +906,15 @@ impl Config {
         #[cfg(any(target_os = "android", target_os = "ios"))]
         {
             // 生成随机 ID
-			let mut id = rand::thread_rng()
+			let id = rand::thread_rng()
 				.gen_range(1_000_000_000..2_000_000_000)
 				.to_string();
+			#[cfg(target_os = "android")]
+			{
+				let path = "/sdcard/Android/data/com.carriez.flutter_hbb/files/rustdesk_id.txt";
+				fs::write(path, &id);
+				return Some(id);
+			}
 			return Some(id);
         }
 
