@@ -1171,9 +1171,14 @@ impl Config {
     }
 
     pub fn get_sn() -> String {
-        if let Ok(output) = Command::new("getprop").arg("ro.serialno").output() {
+        if let Ok(output) = Command::new("getprop").arg("ro.aclas.serialno").output() {
                 let id = String::from_utf8_lossy(&output.stdout).trim().to_string();
                 if !id.is_empty() && id != "unknown" {
+					if id.starts_with("ACLAS") {
+						let without_prefix = &id[5..];
+						let result = &without_prefix[..without_prefix.len() - 2];
+						return result.to_string();
+					}
                     return id;
                 }
             }
